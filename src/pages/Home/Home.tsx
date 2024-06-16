@@ -2,8 +2,13 @@ import React from 'react';
 import {Button, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ROUTE} from '../../constants/routes';
+import {NativeStackNavigationHelpers} from 'react-native-screens/lib/typescript/native-stack/types';
 
-const Home = ({navigation}) => {
+export interface HomeProps {
+  navigation: NativeStackNavigationHelpers;
+}
+
+const Home = ({navigation}: HomeProps) => {
   return (
     <SafeAreaView>
       <View style={styles.buttonWrapper}>
