@@ -9,7 +9,7 @@ interface QuestionFooterProps {
 const QuestionFooter = ({onPressSubmit, onPressReset}: QuestionFooterProps) => {
   return (
     <View style={styles.buttonWrapper}>
-      <Pressable style={styles.button} onPress={onPressSubmit}>
+      <Pressable style={styles.submitButton} onPress={onPressSubmit}>
         <Text style={styles.text}>Submit</Text>
       </Pressable>
       <Text />
@@ -29,6 +29,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     columnGap: 20,
     padding: 10,
+  },
+  submitButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: '#004fff',
   },
   button: {
     alignItems: 'center',

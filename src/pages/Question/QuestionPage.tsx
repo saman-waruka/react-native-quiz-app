@@ -1,18 +1,30 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, FlatList, SafeAreaView, useColorScheme} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  RefreshControl,
+  SafeAreaView,
+  useColorScheme,
+} from 'react-native';
 import QuestionCard from './components/QuestionCard';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {shuffleArray} from '../../utils/shuffle';
 import {Question, questions} from '../../data/questions';
 import QuestionFooter from './components/QuestionFooter';
 import QuestionCardHeader from './components/QuestionHeader';
+import NameInputModal from '../../components/Modal/NameInputModal';
+import {NativeStackNavigationHelpers} from 'react-native-screens/lib/typescript/native-stack/types';
 
-const QuestionPage = ({navigation}) => {
+export interface QuestionPageProps {
+  navigation: NativeStackNavigationHelpers;
+}
+
+const QuestionPage = ({navigation}: QuestionPageProps) => {
   const isDarkMode = useColorScheme() === 'dark';
-  // const [name, setName] = useState<string>('');
+  const [name, setName] = useState<string>('');
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
-  // const [modalVisible, setModalVisible] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [showInputNameModal, setShowInputNameModal] = useState<boolean>(true);
 
   console.log(
     'shuffledQuestions \n',
@@ -35,6 +47,12 @@ const QuestionPage = ({navigation}) => {
     }, 1000);
   }, [loadQuestions]);
 
+  const onReset = () => {
+    loadQuestions();
+    setName('');
+    setShowInputNameModal(true);
+  };
+
   useEffect(() => {
     loadQuestions();
   }, [loadQuestions]);
@@ -52,6 +70,20 @@ const QuestionPage = ({navigation}) => {
       {
         text: 'Submit',
         onPress: () => handleSubmit(),
+        style: 'default',
+      },
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+    ]);
+  };
+
+  const showConfirmReset = () => {
+    Alert.alert('Sure to reset?', 'Press OK to reset all data.', [
+      {
+        text: 'OK',
+        onPress: onReset,
         style: 'default',
       },
       {
@@ -86,6 +118,11 @@ const QuestionPage = ({navigation}) => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
+      <NameInputModal
+        modalVisible={showInputNameModal}
+        setModalVisible={setShowInputNameModal}
+        setName={setName}
+      />
       <FlatList
         data={shuffledQuestions}
         keyExtractor={item => item.id.toString()}
@@ -97,14 +134,16 @@ const QuestionPage = ({navigation}) => {
             onSelectAnswer={onSelectAnswer}
           />
         )}
-        // refreshControl={
-        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        // }
-        ListHeaderComponent={<QuestionCardHeader navigation={navigation} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        ListHeaderComponent={
+          <QuestionCardHeader navigation={navigation} name={name} />
+        }
         ListFooterComponent={
           <QuestionFooter
             onPressSubmit={showConfirmSubmit}
-            onPressReset={onRefresh}
+            onPressReset={showConfirmReset}
           />
         }
       />
