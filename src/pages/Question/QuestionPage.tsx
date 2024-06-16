@@ -14,6 +14,9 @@ import QuestionFooter from './components/QuestionFooter';
 import QuestionCardHeader from './components/QuestionHeader';
 import NameInputModal from '../../components/Modal/NameInputModal';
 import {NativeStackNavigationHelpers} from 'react-native-screens/lib/typescript/native-stack/types';
+import {useAppDispatch} from '../../redux/hook';
+import {addUserScore} from '../../redux/userScoreSlice';
+import {ROUTE} from '../../constants/routes';
 
 export interface QuestionPageProps {
   navigation: NativeStackNavigationHelpers;
@@ -25,6 +28,7 @@ const QuestionPage = ({navigation}: QuestionPageProps) => {
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [showInputNameModal, setShowInputNameModal] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
 
   console.log(
     'shuffledQuestions \n',
@@ -111,6 +115,10 @@ const QuestionPage = ({navigation}: QuestionPageProps) => {
     Alert.alert('Score!', `Your score is ${correctCount}`, [
       {
         text: 'OK',
+        onPress: () => {
+          dispatch(addUserScore({name, score: correctCount}));
+          navigation.navigate(ROUTE.LeaderBoard);
+        },
         style: 'default',
       },
     ]);

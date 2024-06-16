@@ -1,18 +1,26 @@
 // components/LeaderBoard.tsx
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {leaderBoardData, UserScore} from '../../data/leaderboard';
+import {useAppSelector} from '../../redux/hook';
+import {selectUserScores} from '../../redux/userScoreSlice';
 
 const LeaderBoardPage = () => {
-  const [scores, setScores] = useState<UserScore[]>([]);
-  useEffect(() => {
-    setScores(leaderBoardData);
-  }, []);
+  const userScores = useAppSelector(selectUserScores);
+
+  console.log('userScores ', userScores);
+
+  if (userScores.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text>No data found</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {scores.map((score, index) => (
+      {userScores.map((score, index) => (
         <View key={index} style={styles.scoreItem}>
           <Text style={styles.name}>{score.name}</Text>
           <Text style={styles.score}>{score.score}</Text>
@@ -44,6 +52,7 @@ const styles = StyleSheet.create({
   score: {
     fontSize: 18,
   },
+  nameHighlight: {},
 });
 
 export default LeaderBoardPage;
